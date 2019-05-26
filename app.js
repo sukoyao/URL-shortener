@@ -14,7 +14,7 @@ app.use(methodOverride('_method'))
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
-mongoose.connect('mongodb://localhost/urls', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/urls', {
   useNewUrlParser: true,
   useCreateIndex: true
 })   // 設定連線到 mongoDB
