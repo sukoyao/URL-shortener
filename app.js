@@ -63,7 +63,7 @@ app.post('/', (req, res) => {
   newUrl
     .save()
     .then(user => {
-      console.log('localhost:3000/urls/' + newUrl.key)
+      console.log('https://vast-ravine-92996.herokuapp.com/urls/' + newUrl.key)
       res.redirect(`/urls/${newUrl.key}`)
     })
     .catch(err => console.log(err))
@@ -72,7 +72,7 @@ app.post('/', (req, res) => {
 app.get('/urls/:key', (req, res) => {
   Url.findOne({ key: req.params.key }, (err, url) => {
     if (err) return console.error(err)
-    newUrl = 'localhost:3000/urls/' + url.key
+    newUrl = 'https://vast-ravine-92996.herokuapp.com/urls/' + url.key
 
     return res.render('new', { url, newUrl })
   })
