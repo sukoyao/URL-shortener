@@ -7,6 +7,10 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const Url = require('./models/url')
 
+if (process.env.NODE_ENV !== 'production') {      // 如果不是 production 模式
+  require('dotenv').config()                      // 使用 dotenv 讀取 .env 檔案
+}
+
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
@@ -35,19 +39,28 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
-app.post('/', (req, res) => {
+app.post('/shorten', (req, res) => {
   const existUrl = []
 
   const generateUrl = () => {
+    const char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     let url = ''
-    url += bcrypt.hashSync(`${req.body.name}`, 10).slice(-5)
+    for (let i = 0; i < 5; i++) {
+      const randomChar = Math.floor(Math.random() * char.length)
+      url += char[randomChar]
+    }
+    Url.create({
+      name: req.query.url
+    }).then(() => {
+      res.render('new', { newUrl, name: req.query.url })
+    })
 
     return check(url)
   }
 
   // 防止重複
   const check = url => {
-    if (existUrl.includes(url, '/', '.')) {
+    if (existUrl.includes(req.query.url)) {
       return generateUrl()
     } else {
       existUrl.push(url)
@@ -63,7 +76,7 @@ app.post('/', (req, res) => {
   newUrl
     .save()
     .then(user => {
-      console.log('https://shrouded-cliffs-24731.herokuapp.com/urls/' + newUrl.key)
+      console.log('https://shrouded-cliffs-24731.herokuapp.com/' + newUrl.key)
       res.redirect(`/urls/${newUrl.key}`)
     })
     .catch(err => console.log(err))
@@ -72,12 +85,12 @@ app.post('/', (req, res) => {
 app.get('/urls/:key', (req, res) => {
   Url.findOne({ key: req.params.key }, (err, url) => {
     if (err) return console.error(err)
-    newUrl = 'https://shrouded-cliffs-24731.herokuapp.com/urls/' + url.key
+    newUrl = 'https://shrouded-cliffs-24731.herokuapp.com/' + url.key
 
     return res.render('new', { url, newUrl })
   })
 })
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log('App is running: localhost:3000')
+  console.log('App is running')
 })
