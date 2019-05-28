@@ -63,7 +63,7 @@ app.post('/', (req, res) => {
   newUrl
     .save()
     .then(user => {
-      console.log('https://vast-ravine-92996.herokuapp.com/urls/' + newUrl.key)
+      console.log('https://shrouded-cliffs-24731.herokuapp.com/urls/' + newUrl.key)
       res.redirect(`/urls/${newUrl.key}`)
     })
     .catch(err => console.log(err))
@@ -72,7 +72,7 @@ app.post('/', (req, res) => {
 app.get('/urls/:key', (req, res) => {
   Url.findOne({ key: req.params.key }, (err, url) => {
     if (err) return console.error(err)
-    newUrl = 'https://vast-ravine-92996.herokuapp.com/urls/' + url.key
+    newUrl = 'https://shrouded-cliffs-24731.herokuapp.com/urls/' + url.key
 
     return res.render('new', { url, newUrl })
   })
