@@ -6,6 +6,7 @@ const methodOverride = require('method-override')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const Url = require('./models/url')
+const existUrl = []
 
 if (process.env.NODE_ENV !== 'production') {      // 如果不是 production 模式
   require('dotenv').config()                      // 使用 dotenv 讀取 .env 檔案
@@ -40,7 +41,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/shorten', (req, res) => {
-  const existUrl = []
 
   const generateUrl = () => {
     const char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
