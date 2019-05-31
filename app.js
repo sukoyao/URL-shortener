@@ -41,46 +41,38 @@ app.get('/', (req, res) => {
 })
 
 app.post('/shorten', (req, res) => {
+  Url.findOne({ name: req.body.name }, (err, result) => {
+    if (result) {
+      console.log('此網址已存在!請重新輸入新網址', req.body.name, result)
+      return res.render('index')
 
-  const generateUrl = () => {
-    const char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-    let url = ''
-    for (let i = 0; i < 5; i++) {
-      const randomChar = Math.floor(Math.random() * char.length)
-      url += char[randomChar]
-    }
-    Url.create({
-      name: req.query.url
-    }).then(() => {
-      res.render('new', { newUrl, name: req.query.url })
-    })
-
-    return check(url)
-  }
-
-  // 防止重複
-  const check = url => {
-    if (existUrl.includes(req.query.url)) {
-      return generateUrl()
     } else {
-      existUrl.push(url)
-      return url
+      const newUrl = new Url({
+        name: req.body.name,
+        key: generateUrl()
+      })
+
+      newUrl
+        .save()
+        .then(user => {
+          console.log('https://shrouded-cliffs-24731.herokuapp.com/' + newUrl.key)
+          res.redirect(`/urls/${newUrl.key}`)
+        })
+        .catch(err => console.log(err))
     }
+  })
+})
+
+const generateUrl = () => {
+  const char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+  let url = ''
+  for (let i = 0; i < 5; i++) {
+    const randomChar = Math.floor(Math.random() * char.length)
+    url += char[randomChar]
   }
 
-  const newUrl = new Url({
-    name: req.body.name,
-    key: generateUrl()
-  })
-
-  newUrl
-    .save()
-    .then(user => {
-      console.log('https://shrouded-cliffs-24731.herokuapp.com/' + newUrl.key)
-      res.redirect(`/urls/${newUrl.key}`)
-    })
-    .catch(err => console.log(err))
-})
+  return url
+}
 
 app.get('/urls/:key', (req, res) => {
   Url.findOne({ key: req.params.key }, (err, url) => {
