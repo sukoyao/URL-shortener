@@ -43,8 +43,11 @@ app.post('/shorten', (req, res) => {
   Url.findOne({ name: req.body.name }, (err, result) => {
     if (result) {
       console.log('此網址已存在!請重新輸入新網址', req.body.name, result)
-      return res.render('index')
+      Url.findOne({ name: req.body.name }, (err, url) => {
 
+        const Url = 'https://shrouded-cliffs-24731.herokuapp.com/' + url.key
+        return res.render('exist', { url, Url })
+      })
     } else {
       const newUrl = new Url({
         name: req.body.name,
