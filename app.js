@@ -42,11 +42,12 @@ app.get('/', (req, res) => {
 app.post('/shorten', (req, res) => {
   Url.findOne({ name: req.body.name }, (err, result) => {
     if (result) {
-      console.log('此網址已存在!請重新輸入新網址', req.body.name, result)
+      console.log('此網址已存在!', req.body.name, result)
       Url.findOne({ name: req.body.name }, (err, url) => {
 
-        const Url = 'https://shrouded-cliffs-24731.herokuapp.com/' + url.key
-        return res.render('exist', { url, Url })
+        const existUrl = 'https://shrouded-cliffs-24731.herokuapp.com/' + url.key
+        
+        return res.render('exist', { url, existUrl })
       })
     } else {
       const newUrl = new Url({
