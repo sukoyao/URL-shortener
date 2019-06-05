@@ -58,7 +58,7 @@ app.post('/shorten', (req, res) => {
       newUrl
         .save()
         .then(user => {
-          console.log(`${page_url}` + newUrl.key)
+          console.log(page_url + newUrl.key)
           res.redirect(`/urls/${newUrl.key}`)
         })
         .catch(err => console.log(err))
