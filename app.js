@@ -45,9 +45,9 @@ app.post('/shorten', (req, res) => {
     if (result) {
       console.log('此網址已存在!', req.body.name, result)
       Url.findOne({ name: req.body.name }, (err, url) => {
-        const Url = page_url + url.key
+        const existUrl = page_url + url.key
 
-        return res.render('exist', { url, Url })
+        return res.render('exist', { url, existUrl })
       })
     } else {
       const newUrl = new Url({
