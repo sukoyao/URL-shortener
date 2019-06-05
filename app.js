@@ -6,6 +6,7 @@ const methodOverride = require('method-override')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const Url = require('./models/url')
+const page_url = process.env.shortenurl_generator_URL || 'http:localhost:3000/'
 
 if (process.env.NODE_ENV !== 'production') {      // 如果不是 production 模式
   require('dotenv').config()                      // 使用 dotenv 讀取 .env 檔案
@@ -44,10 +45,9 @@ app.post('/shorten', (req, res) => {
     if (result) {
       console.log('此網址已存在!', req.body.name, result)
       Url.findOne({ name: req.body.name }, (err, url) => {
+        const Url = page_url + url.key
 
-        const existUrl = 'https://shrouded-cliffs-24731.herokuapp.com/' + url.key
-        
-        return res.render('exist', { url, existUrl })
+        return res.render('exist', { url, Url })
       })
     } else {
       const newUrl = new Url({
@@ -58,7 +58,7 @@ app.post('/shorten', (req, res) => {
       newUrl
         .save()
         .then(user => {
-          console.log('https://shrouded-cliffs-24731.herokuapp.com/' + newUrl.key)
+          console.log(`${page_url}` + newUrl.key)
           res.redirect(`/urls/${newUrl.key}`)
         })
         .catch(err => console.log(err))
@@ -80,7 +80,7 @@ const generateUrl = () => {
 app.get('/urls/:key', (req, res) => {
   Url.findOne({ key: req.params.key }, (err, url) => {
     if (err) return console.error(err)
-    newUrl = 'https://shrouded-cliffs-24731.herokuapp.com/' + url.key
+    newUrl = page_url + url.key
 
     return res.render('new', { url, newUrl })
   })
